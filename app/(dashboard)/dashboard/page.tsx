@@ -71,7 +71,7 @@ export default async function DashboardPage() {
       <div className="space-y-8">
         <div>
           <h1 className="text-3xl font-bold text-foreground">Dashboard</h1>
-          <p className="mt-2 text-muted-foreground">Welcome back! Here's an overview of your invoices.</p>
+          <p className="mt-2 text-muted-foreground">Welcome back! Here&apos;s an overview of your invoices.</p>
         </div>
 
         {/* Profile Completion CTA */}
