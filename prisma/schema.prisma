@@ -1,0 +1,118 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  createdAt DateTime @default(now()) @map("created_at")
+  
+  companyProfile CompanyProfile?
+  clients        Client[]
+  invoices       Invoice[]
+  
+  @@map("users")
+}
+
+model CompanyProfile {
+  id            String   @id @default(cuid())
+  userId        String   @unique
+  companyName   String   @map("company_name")
+  contactPerson String?  @map("contact_person")
+  email         String?
+  phone         String?
+  streetAddress String?  @map("street_address")
+  city          String?
+  stateProvince String?  @map("state_province")
+  postalCode    String?  @map("postal_code")
+  country       String?
+  taxId         String?  @map("tax_id")
+  logoUrl       String?  @map("logo_url")
+  createdAt     DateTime @default(now()) @map("created_at")
+  updatedAt     DateTime @updatedAt @map("updated_at")
+  
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  @@index([userId])
+  @@map("company_profiles")
+}
+
+model Client {
+  id            String   @id @default(cuid())
+  userId        String   @map("user_id")
+  companyName   String   @map("company_name")
+  contactName   String?  @map("contact_name")
+  email         String?
+  phone         String?
+  streetAddress String?  @map("street_address")
+  city          String?
+  state         String?
+  postalCode    String?  @map("postal_code")
+  country       String?
+  taxId         String?  @map("tax_id")
+  notes         String?  @db.Text
+  createdAt     DateTime @default(now()) @map("created_at")
+  updatedAt     DateTime @updatedAt @map("updated_at")
+  
+  user     User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  invoices Invoice[]
+  
+  @@index([userId])
+  @@map("clients")
+}
+
+model Invoice {
+  id            String   @id @default(cuid())
+  userId        String   @map("user_id")
+  clientId      String   @map("client_id")
+  invoiceNumber String   @map("invoice_number")
+  issueDate     DateTime @map("issue_date")
+  dueDate       DateTime @map("due_date")
+  status        InvoiceStatus @default(DRAFT)
+  subtotal      Decimal  @db.Decimal(10, 2)
+  taxPercentage Decimal? @map("tax_percentage") @db.Decimal(5, 2)
+  taxAmount     Decimal? @map("tax_amount") @db.Decimal(10, 2)
+  totalAmount   Decimal  @map("total_amount") @db.Decimal(10, 2)
+  notes         String?  @db.Text
+  createdAt     DateTime @default(now()) @map("created_at")
+  updatedAt     DateTime @updatedAt @map("updated_at")
+  
+  user       User            @relation(fields: [userId], references: [id], onDelete: Cascade)
+  client     Client          @relation(fields: [clientId], references: [id], onDelete: Restrict)
+  lineItems  InvoiceLineItem[]
+  
+  @@unique([userId, invoiceNumber])
+  @@index([userId])
+  @@index([clientId])
+  @@index([status])
+  @@map("invoices")
+}
+
+model InvoiceLineItem {
+  id          String   @id @default(cuid())
+  invoiceId   String   @map("invoice_id")
+  description String
+  quantity    Decimal  @db.Decimal(10, 3)
+  unitPrice   Decimal  @map("unit_price") @db.Decimal(10, 2)
+  lineTotal   Decimal  @map("line_total") @db.Decimal(10, 2)
+  sortOrder   Int      @default(0) @map("sort_order")
+  
+  invoice Invoice @relation(fields: [invoiceId], references: [id], onDelete: Cascade)
+  
+  @@index([invoiceId])
+  @@map("invoice_line_items")
+}
+
+enum InvoiceStatus {
+  DRAFT
+  SENT
+  PAID
+}

@@ -2,22 +2,144 @@
 @tailwind components;
 @tailwind utilities;
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
-
-@media (prefers-color-scheme: dark) {
+@layer base {
   :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+    /* Brand Colors */
+    --color-primary: 220 90% 56%;
+    --color-primary-hover: 220 90% 50%;
+    --color-primary-active: 220 90% 44%;
+    
+    /* Semantic Colors - Light Mode */
+    --color-background: 0 0% 100%;
+    --color-foreground: 222 47% 11%;
+    
+    --color-card: 0 0% 100%;
+    --color-card-foreground: 222 47% 11%;
+    
+    --color-muted: 210 40% 96%;
+    --color-muted-foreground: 215 16% 47%;
+    
+    --color-accent: 210 40% 96%;
+    --color-accent-foreground: 222 47% 11%;
+    
+    --color-border: 214 32% 91%;
+    --color-input: 0 0% 100%;
+    --color-ring: 220 90% 56%;
+    --color-primary-foreground: 0 0% 100%;
+    --color-destructive: 0 84% 60%;
+    --color-destructive-foreground: 0 0% 100%;
+    
+    /* Status Colors */
+    --color-success: 142 71% 45%;
+    --color-success-bg: 142 71% 95%;
+    --color-warning: 38 92% 50%;
+    --color-warning-bg: 38 92% 95%;
+    --color-error: 0 84% 60%;
+    --color-error-bg: 0 84% 95%;
+    --color-info: 199 89% 48%;
+    --color-info-bg: 199 89% 95%;
+    
+    /* Invoice Status Colors */
+    --color-draft: 215 16% 47%;
+    --color-draft-bg: 215 20% 95%;
+    --color-sent: 199 89% 48%;
+    --color-sent-bg: 199 89% 95%;
+    --color-paid: 142 71% 45%;
+    --color-paid-bg: 142 71% 95%;
+    --color-overdue: 0 84% 60%;
+    --color-overdue-bg: 0 84% 95%;
+    
+    /* Shadows */
+    --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+    --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+    --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+    --shadow-xl: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
+    
+    /* Border Radius */
+    --radius-sm: 0.25rem;
+    --radius-md: 0.375rem;
+    --radius-lg: 0.5rem;
+    --radius-xl: 0.75rem;
+    --radius-2xl: 1rem;
   }
-}
 
-body {
-  color: var(--foreground);
-  background: var(--background);
-  font-family: Arial, Helvetica, sans-serif;
+  .dark {
+    /* Semantic Colors - Dark Mode */
+    --color-background: 222 47% 11%;
+    --color-foreground: 210 40% 98%;
+    
+    --color-card: 217 33% 17%;
+    --color-card-foreground: 210 40% 98%;
+    
+    --color-muted: 217 33% 17%;
+    --color-muted-foreground: 215 20% 65%;
+    
+    --color-accent: 217 33% 17%;
+    --color-accent-foreground: 210 40% 98%;
+    
+    --color-border: 217 33% 23%;
+    --color-input: 217 33% 20%;
+    --color-ring: 220 90% 56%;
+    --color-primary-foreground: 0 0% 100%;
+    --color-destructive: 0 84% 55%;
+    --color-destructive-foreground: 0 0% 100%;
+    
+    /* Status Colors - Dark Mode */
+    --color-success: 142 71% 40%;
+    --color-success-bg: 142 71% 15%;
+    --color-warning: 38 92% 45%;
+    --color-warning-bg: 38 92% 15%;
+    --color-error: 0 84% 55%;
+    --color-error-bg: 0 84% 15%;
+    --color-info: 199 89% 43%;
+    --color-info-bg: 199 89% 15%;
+    
+    /* Invoice Status - Dark Mode */
+    --color-draft: 215 20% 55%;
+    --color-draft-bg: 215 20% 20%;
+    --color-sent: 199 89% 43%;
+    --color-sent-bg: 199 89% 15%;
+    --color-paid: 142 71% 40%;
+    --color-paid-bg: 142 71% 15%;
+    --color-overdue: 0 84% 55%;
+    --color-overdue-bg: 0 84% 15%;
+    
+    /* Shadows - Dark Mode */
+    --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.3);
+    --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.4), 0 2px 4px -2px rgb(0 0 0 / 0.3);
+    --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.4), 0 4px 6px -4px rgb(0 0 0 / 0.3);
+    --shadow-xl: 0 20px 25px -5px rgb(0 0 0 / 0.4), 0 8px 10px -6px rgb(0 0 0 / 0.3);
+  }
+
+  * {
+    @apply border-border;
+    transition: background-color 0.2s, border-color 0.2s, color 0.2s;
+  }
+
+  body {
+    @apply bg-background text-foreground;
+    font-feature-settings: "rlig" 1, "calt" 1;
+  }
+
+  /* Focus-visible for keyboard navigation */
+  *:focus-visible {
+    outline: 2px solid hsl(var(--color-ring));
+    outline-offset: 2px;
+  }
+
+  /* Remove focus outline on mouse click */
+  *:focus:not(:focus-visible) {
+    outline: none;
+  }
+
+  /* Custom focus ring for specific elements */
+  button:focus-visible,
+  a:focus-visible,
+  input:focus-visible,
+  select:focus-visible,
+  textarea:focus-visible {
+    @apply ring-2 ring-primary ring-offset-2 ring-offset-background;
+  }
 }
 
 @layer utilities {
@@ -25,3 +147,5 @@ body {
     text-wrap: balance;
   }
 }
+
+
