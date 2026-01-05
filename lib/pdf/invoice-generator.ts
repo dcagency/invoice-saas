@@ -1,6 +1,22 @@
 import PDFDocument from 'pdfkit'
 import { formatDate, formatCurrency, formatNumber, isOverdue } from './pdf-helpers'
 
+/**
+ * Client data structure used by PDF generation
+ * Contains only the fields needed for PDF rendering
+ */
+export interface ClientPDFDTO {
+  companyName: string
+  contactName: string | null
+  email: string | null
+  streetAddress: string | null
+  city: string | null
+  state: string | null
+  postalCode: string | null
+  country: string | null
+  taxId: string | null
+}
+
 interface InvoiceWithRelations {
   id: string
   invoiceNumber: string
@@ -12,17 +28,7 @@ interface InvoiceWithRelations {
   taxAmount: number | string | any | null
   totalAmount: number | string | any
   notes: string | null
-  client: {
-    companyName: string
-    contactName: string | null
-    email: string | null
-    streetAddress: string | null
-    city: string | null
-    state: string | null
-    postalCode: string | null
-    country: string | null
-    taxId: string | null
-  }
+  client: ClientPDFDTO
   lineItems: Array<{
     description: string
     quantity: number | string | any

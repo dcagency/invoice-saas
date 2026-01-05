@@ -2,7 +2,7 @@ import { auth } from '@clerk/nextjs/server'
 import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
 import PDFDocument from 'pdfkit'
-import { generateInvoicePDF } from '@/lib/pdf/invoice-generator'
+import { generateInvoicePDF, ClientPDFDTO } from '@/lib/pdf/invoice-generator'
 import { isValidCuid } from '@/lib/api/validators'
 import { handleApiError } from '@/lib/api/error-handler'
 import { toCompanyProfileDTO } from '@/lib/mappers/companyProfile'
@@ -34,7 +34,19 @@ export async function GET(
         userId, // CRITICAL: ownership check
       },
       include: {
-        client: true,
+        client: {
+          select: {
+            companyName: true,
+            contactName: true,
+            email: true,
+            streetAddress: true,
+            city: true,
+            state: true,
+            postalCode: true,
+            country: true,
+            taxId: true,
+          },
+        },
         lineItems: {
           orderBy: {
             sortOrder: 'asc',
@@ -60,20 +72,16 @@ export async function GET(
     }
 
     // Handle deleted client gracefully (use placeholder if client was deleted)
-    let clientInfo = invoice.client
-    if (!clientInfo) {
-      // Client was deleted - use placeholder
-      clientInfo = {
-        companyName: '[Client Deleted]',
-        contactName: null,
-        email: null,
-        streetAddress: null,
-        city: null,
-        state: null,
-        postalCode: null,
-        country: null,
-        taxId: null,
-      }
+    const clientPDF: ClientPDFDTO = invoice.client || {
+      companyName: '[Client Deleted]',
+      contactName: null,
+      email: null,
+      streetAddress: null,
+      city: null,
+      state: null,
+      postalCode: null,
+      country: null,
+      taxId: null,
     }
 
     // Convert Prisma companyProfile to DTO format using mapper
@@ -82,7 +90,7 @@ export async function GET(
     // Create invoice object with client info (may be placeholder) and DTO companyProfile
     const invoiceWithClient = {
       ...invoice,
-      client: clientInfo,
+      client: clientPDF,
       user: {
         companyProfile: companyProfileDTO,
       },
