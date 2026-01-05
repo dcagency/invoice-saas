@@ -62,6 +62,36 @@ export function generateInvoicePDF(doc: PDFDocumentType, invoice: InvoiceWithRel
     throw new Error('Company profile is required')
   }
 
+  // Track current page number (starts at 1)
+  let currentPageIndex = 1
+  const pageHeight = 792 // A4 height in points
+  const footerY = pageHeight - 40
+
+  // Helper function to write footer on current page
+  const writeFooter = (pageNum: number, totalPages: number) => {
+    doc.fontSize(8).font('Helvetica').fillColor('#666666')
+    doc.text(
+      'Thank you for your business',
+      50,
+      footerY,
+      { align: 'center', width: 495 }
+    )
+
+    // Page number (if multi-page)
+    if (totalPages > 1) {
+      doc.text(
+        `Page ${pageNum} of ${totalPages}`,
+        50,
+        footerY + 12,
+        { align: 'center', width: 495 }
+      )
+    }
+    doc.fillColor('#000000') // Reset color
+  }
+
+  // Track page count - will be updated as pages are added
+  let totalPageCount = 1
+
   let yPosition = 40
 
   // --- HEADER: Company Information ---
@@ -231,7 +261,15 @@ export function generateInvoicePDF(doc: PDFDocumentType, invoice: InvoiceWithRel
   lineItems.forEach((item, index) => {
     // Check if we need a new page
     if (yPosition > 720) {
+      // Write footer on current page before adding new page
+      // Get current page count before adding new page
+      totalPageCount = doc.bufferedPageRange().count
+      writeFooter(currentPageIndex, totalPageCount)
+
+      // Add new page (this increments the total page count)
       doc.addPage()
+      currentPageIndex++
+      totalPageCount = doc.bufferedPageRange().count
       yPosition = 50
 
       // Repeat table header on new page
@@ -334,31 +372,10 @@ export function generateInvoicePDF(doc: PDFDocumentType, invoice: InvoiceWithRel
   }
 
   // --- FOOTER ---
-  // Footer - bottom of page
-  const pageHeight = 792 // A4 height in points
-  const footerY = pageHeight - 40
-
-  doc.fontSize(8).font('Helvetica').fillColor('#666666')
-  doc.text(
-    'Thank you for your business',
-    50,
-    footerY,
-    { align: 'center', width: 495 }
-  )
-
-  // Page number (if multi-page)
-  const pageCount = doc.bufferedPageRange().count
-  if (pageCount > 1) {
-    doc.text(
-      `Page ${doc.page.number} of ${pageCount}`,
-      50,
-      footerY + 12,
-      { align: 'center', width: 495 }
-    )
-  }
-
-  // Reset color
-  doc.fillColor('#000000')
+  // Write footer on the last page
+  // Get final page count
+  totalPageCount = doc.bufferedPageRange().count
+  writeFooter(currentPageIndex, totalPageCount)
 }
 
 // Generate PDF as Buffer (reusable for email attachments)
