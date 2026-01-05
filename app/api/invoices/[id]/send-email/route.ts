@@ -91,7 +91,7 @@ export async function POST(
     const body = await request.json()
     const validatedData = sendEmailSchema.parse(body)
 
-    // Generate PDF buffer
+    // Generate PDF buffer using verified client (not invoice.client which may be null)
     const pdfBuffer = await generateInvoicePDFBuffer({
       id: invoice.id,
       invoiceNumber: invoice.invoiceNumber,
@@ -104,15 +104,15 @@ export async function POST(
       totalAmount: decimalToNumberOrZero(invoice.totalAmount),
       notes: invoice.notes,
       client: {
-        companyName: invoice.client.companyName,
-        contactName: invoice.client.contactName,
-        email: invoice.client.email,
-        streetAddress: invoice.client.streetAddress,
-        city: invoice.client.city,
-        state: invoice.client.state,
-        postalCode: invoice.client.postalCode,
-        country: invoice.client.country,
-        taxId: invoice.client.taxId,
+        companyName: client.companyName,
+        contactName: client.contactName,
+        email: client.email,
+        streetAddress: client.streetAddress,
+        city: client.city,
+        state: client.state,
+        postalCode: client.postalCode,
+        country: client.country,
+        taxId: client.taxId,
       },
       lineItems: invoice.lineItems.map((item) => ({
         description: item.description,

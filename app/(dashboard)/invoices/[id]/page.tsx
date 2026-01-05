@@ -43,6 +43,18 @@ export default async function InvoiceDetailPage({ params }: InvoiceDetailPagePro
   // Convert Prisma format to DTO using mapper
   const companyProfileDTO = companyProfile ? toCompanyProfileDTO(companyProfile) : null
 
+  // Handle deleted client gracefully (use placeholder if client was deleted)
+  const clientDTO = invoice.client || {
+    companyName: '[Client Deleted]',
+    contactName: null,
+    email: null,
+    streetAddress: null,
+    city: null,
+    state: null,
+    postalCode: null,
+    country: null,
+  }
+
   return (
     <PageContainer maxWidth="max-w-5xl">
       <InvoiceDetailView
@@ -57,7 +69,7 @@ export default async function InvoiceDetailPage({ params }: InvoiceDetailPagePro
           taxAmount: decimalToNumber(invoice.taxAmount),
           total: decimalToNumberOrZero(invoice.totalAmount),
           notes: invoice.notes,
-          client: invoice.client,
+          client: clientDTO,
           lineItems: invoice.lineItems.map((item) => ({
             description: item.description,
             quantity: decimalToNumberOrZero(item.quantity),

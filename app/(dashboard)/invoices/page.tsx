@@ -51,7 +51,10 @@ export default async function InvoicesPage() {
             dueDate: invoice.dueDate.toISOString(),
             total: decimalToNumberOrZero(invoice.totalAmount),
             status: invoice.status,
-            client: invoice.client,
+            client: invoice.client || {
+              id: 'deleted',
+              companyName: '[Client Deleted]',
+            },
           }))}
         />
       </div>

@@ -56,7 +56,7 @@ export default class ErrorBoundary extends Component<Props, State> {
             <p className="text-muted-foreground mb-6">
               We encountered an unexpected error. Please try refreshing the page.
             </p>
-            {this.state.error && process.env.NODE_ENV === 'development' && (
+            {this.state.error && typeof window !== 'undefined' && window.location.hostname === 'localhost' && (
               <pre className="text-xs text-error mb-4 p-4 bg-error/10 rounded overflow-auto border border-error/20">
                 {this.state.error.toString()}
               </pre>

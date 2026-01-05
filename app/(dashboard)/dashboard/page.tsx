@@ -48,7 +48,7 @@ export default async function DashboardPage() {
   const profileComplete = isProfileComplete(companyProfile)
 
   // Get invoice statistics
-  const [totalInvoices, draftInvoices, sentInvoices, paidInvoices, recentInvoices] = await Promise.all([
+  const [totalInvoices, draftInvoices, sentInvoices, paidInvoices, recentInvoicesRaw] = await Promise.all([
     prisma.invoice.count({ where: { userId } }),
     prisma.invoice.count({ where: { userId, status: 'DRAFT' } }),
     prisma.invoice.count({ where: { userId, status: 'SENT' } }),
@@ -66,6 +66,14 @@ export default async function DashboardPage() {
       },
     }),
   ])
+
+  // Handle deleted clients gracefully (use placeholder if client was deleted)
+  const recentInvoices = recentInvoicesRaw.map((invoice) => ({
+    ...invoice,
+    client: invoice.client || {
+      companyName: '[Client Deleted]',
+    },
+  }))
 
   return (
     <PageContainer>
