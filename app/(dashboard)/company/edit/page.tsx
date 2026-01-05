@@ -5,6 +5,7 @@ import CompanyProfileFormWrapper from '@/components/CompanyProfileFormWrapper'
 import ProfileCompletionBadge from '@/components/ProfileCompletionBadge'
 import { isProfileComplete } from '@/lib/company-profile'
 import { PageContainer } from '@/components/layout/PageContainer'
+import { toCompanyProfileDTO } from '@/lib/mappers/companyProfile'
 
 export default async function CompanyEditPage() {
   const { userId } = await auth()
@@ -45,6 +46,9 @@ export default async function CompanyEditPage() {
 
   const complete = isProfileComplete(companyProfile)
 
+  // Convert Prisma format to DTO using mapper
+  const companyProfileDTO = toCompanyProfileDTO(companyProfile)
+
   return (
     <PageContainer maxWidth="max-w-3xl">
       <div className="space-y-6">
@@ -58,7 +62,7 @@ export default async function CompanyEditPage() {
               <ProfileCompletionBadge isComplete={complete} />
             </div>
             <CompanyProfileFormWrapper
-              initialData={companyProfile}
+              initialData={companyProfileDTO}
               mode="edit"
             />
           </div>

@@ -3,7 +3,9 @@ import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
 import { z } from 'zod'
 import { handleApiError } from '@/lib/api/error-handler'
+import { toCompanyProfileDTO, fromCompanyProfileDTO } from '@/lib/mappers/companyProfile'
 
+// Schema uses DTO format (contactName, state) for API/UI consistency
 const companyProfileSchema = z.object({
   companyName: z.string().min(2, 'Company name must be at least 2 characters').max(200, 'Company name must be at most 200 characters'),
   contactName: z.string().optional().nullable(),
@@ -41,31 +43,18 @@ export async function POST(request: NextRequest) {
       )
     }
 
+    // Convert DTO to Prisma format using mapper
+    const prismaData = fromCompanyProfileDTO(validatedData)
+
     const companyProfile = await prisma.companyProfile.create({
       data: {
         userId,
-        companyName: validatedData.companyName,
-        contactPerson: validatedData.contactName || null, // Map contactName to contactPerson
-        email: validatedData.email || null,
-        phone: validatedData.phone || null,
-        streetAddress: validatedData.streetAddress || null,
-        city: validatedData.city || null,
-        stateProvince: validatedData.state || null, // Map state to stateProvince
-        postalCode: validatedData.postalCode || null,
-        country: validatedData.country || null,
-        taxId: validatedData.taxId || null,
+        ...prismaData,
       },
     })
 
-    // Map Prisma fields to API response format
-    return NextResponse.json(
-      {
-        ...companyProfile,
-        contactName: companyProfile.contactPerson ?? null, // Map contactPerson to contactName
-        state: companyProfile.stateProvince ?? null, // Map stateProvince to state
-      },
-      { status: 201 }
-    )
+    // Convert Prisma format to DTO using mapper
+    return NextResponse.json(toCompanyProfileDTO(companyProfile), { status: 201 })
   } catch (error) {
     if (error instanceof z.ZodError) {
       return NextResponse.json(
@@ -96,12 +85,8 @@ export async function GET() {
       return NextResponse.json({ error: 'Company profile not found' }, { status: 404 })
     }
 
-    // Map Prisma fields to API response format
-    return NextResponse.json({
-      ...profile,
-      contactName: profile.contactPerson ?? null, // Map contactPerson to contactName
-      state: profile.stateProvince ?? null, // Map stateProvince to state
-    })
+    // Convert Prisma format to DTO using mapper
+    return NextResponse.json(toCompanyProfileDTO(profile))
   } catch (error) {
     return handleApiError(error, 'GET /api/company/profile')
   }
@@ -131,30 +116,18 @@ export async function PATCH(request: NextRequest) {
       )
     }
 
+    // Convert DTO to Prisma format using mapper
+    const prismaData = fromCompanyProfileDTO(validatedData)
+
     const companyProfile = await prisma.companyProfile.update({
       where: {
         userId,
       },
-      data: {
-        companyName: validatedData.companyName,
-        contactPerson: validatedData.contactName || null, // Map contactName to contactPerson
-        email: validatedData.email || null,
-        phone: validatedData.phone || null,
-        streetAddress: validatedData.streetAddress || null,
-        city: validatedData.city || null,
-        stateProvince: validatedData.state || null, // Map state to stateProvince
-        postalCode: validatedData.postalCode || null,
-        country: validatedData.country || null,
-        taxId: validatedData.taxId || null,
-      },
+      data: prismaData,
     })
 
-    // Map Prisma fields to API response format
-    return NextResponse.json({
-      ...companyProfile,
-      contactName: companyProfile.contactPerson ?? null, // Map contactPerson to contactName
-      state: companyProfile.stateProvince ?? null, // Map stateProvince to state
-    })
+    // Convert Prisma format to DTO using mapper
+    return NextResponse.json(toCompanyProfileDTO(companyProfile))
   } catch (error) {
     if (error instanceof z.ZodError) {
       return NextResponse.json(
