@@ -5,6 +5,7 @@ import PDFDocument from 'pdfkit'
 import { generateInvoicePDF } from '@/lib/pdf/invoice-generator'
 import { isValidCuid } from '@/lib/api/validators'
 import { handleApiError } from '@/lib/api/error-handler'
+import { toCompanyProfileDTO } from '@/lib/mappers/companyProfile'
 
 // GET /api/invoices/[id]/pdf - Generate and download invoice PDF
 export async function GET(
@@ -75,10 +76,16 @@ export async function GET(
       }
     }
 
-    // Create invoice object with client info (may be placeholder)
+    // Convert Prisma companyProfile to DTO format using mapper
+    const companyProfileDTO = toCompanyProfileDTO(invoice.user.companyProfile)
+
+    // Create invoice object with client info (may be placeholder) and DTO companyProfile
     const invoiceWithClient = {
       ...invoice,
       client: clientInfo,
+      user: {
+        companyProfile: companyProfileDTO,
+      },
     }
 
     // Create PDF document

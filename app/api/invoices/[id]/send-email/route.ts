@@ -7,6 +7,7 @@ import { generateInvoicePDFBuffer } from '@/lib/pdf/invoice-generator'
 import { decimalToNumberOrZero } from '@/lib/prisma-helpers'
 import { isValidCuid } from '@/lib/api/validators'
 import { handleApiError } from '@/lib/api/error-handler'
+import { toCompanyProfileDTO } from '@/lib/mappers/companyProfile'
 
 export const runtime = 'nodejs'
 
@@ -120,18 +121,7 @@ export async function POST(
         lineTotal: decimalToNumberOrZero(item.lineTotal),
       })),
       user: {
-        companyProfile: {
-          companyName: invoice.user.companyProfile.companyName,
-          contactName: invoice.user.companyProfile.contactPerson,
-          email: invoice.user.companyProfile.email,
-          phone: invoice.user.companyProfile.phone,
-          streetAddress: invoice.user.companyProfile.streetAddress,
-          city: invoice.user.companyProfile.city,
-          state: invoice.user.companyProfile.stateProvince,
-          postalCode: invoice.user.companyProfile.postalCode,
-          country: invoice.user.companyProfile.country,
-          taxId: invoice.user.companyProfile.taxId,
-        },
+        companyProfile: toCompanyProfileDTO(invoice.user.companyProfile),
       },
     })
 

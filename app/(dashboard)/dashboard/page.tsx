@@ -4,6 +4,7 @@ import { prisma } from '@/lib/prisma'
 import { isProfileComplete } from '@/lib/company-profile'
 import AnalyticsSection from '@/components/dashboard/AnalyticsSection'
 import { PageContainer } from '@/components/layout/PageContainer'
+import { decimalToNumberOrZero } from '@/lib/prisma-helpers'
 
 export default async function DashboardPage() {
   const { userId } = await auth()
@@ -244,7 +245,7 @@ export default async function DashboardPage() {
                           {new Date(invoice.issueDate).toLocaleDateString()}
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap text-sm text-muted-foreground">
-                          {new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(Number(invoice.totalAmount))}
+                          {new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(decimalToNumberOrZero((invoice as any).totalAmount))}
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap">
                           <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${

@@ -4,6 +4,7 @@ import { prisma } from '@/lib/prisma'
 import InvoiceDetailView from '@/components/InvoiceDetailView'
 import { decimalToNumber, decimalToNumberOrZero } from '@/lib/prisma-helpers'
 import { PageContainer } from '@/components/layout/PageContainer'
+import { toCompanyProfileDTO } from '@/lib/mappers/companyProfile'
 
 interface InvoiceDetailPageProps {
   params: { id: string }
@@ -39,6 +40,9 @@ export default async function InvoiceDetailPage({ params }: InvoiceDetailPagePro
     where: { userId },
   })
 
+  // Convert Prisma format to DTO using mapper
+  const companyProfileDTO = companyProfile ? toCompanyProfileDTO(companyProfile) : null
+
   return (
     <PageContainer maxWidth="max-w-5xl">
       <InvoiceDetailView
@@ -61,7 +65,7 @@ export default async function InvoiceDetailPage({ params }: InvoiceDetailPagePro
             lineTotal: decimalToNumberOrZero(item.lineTotal),
           })),
         }}
-        companyProfile={companyProfile}
+        companyProfile={companyProfileDTO}
       />
     </PageContainer>
   )
