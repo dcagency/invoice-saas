@@ -23,6 +23,22 @@ export interface CompanyProfileDTO {
 }
 
 /**
+ * Input type for CompanyProfileDTO that allows undefined for optional fields
+ * Used for API payloads (from Zod validation) where fields can be undefined
+ */
+export type CompanyProfileDTOInput = Omit<CompanyProfileDTO, 'id' | 'userId' | 'createdAt' | 'updatedAt' | 'logoUrl'> & {
+  contactName?: string | null
+  state?: string | null
+  email?: string | null
+  phone?: string | null
+  streetAddress?: string | null
+  city?: string | null
+  postalCode?: string | null
+  country?: string | null
+  taxId?: string | null
+}
+
+/**
  * Converts a Prisma CompanyProfile (contactPerson, stateProvince) to DTO format (contactName, state)
  * This is the single source of truth for converting from Prisma to UI/API format
  */
@@ -35,11 +51,12 @@ export function toCompanyProfileDTO(profile: CompanyProfile): CompanyProfileDTO 
 }
 
 /**
- * Converts a DTO (contactName, state) to Prisma format (contactPerson, stateProvince)
+ * Converts a DTO input (contactName, state) to Prisma format (contactPerson, stateProvince)
  * This is the single source of truth for converting from UI/API to Prisma format
+ * Normalizes undefined values to null to ensure Prisma never receives undefined
  */
 export function fromCompanyProfileDTO(
-  dto: Omit<CompanyProfileDTO, 'id' | 'userId' | 'createdAt' | 'updatedAt' | 'logoUrl'>
+  dto: CompanyProfileDTOInput
 ): Omit<CompanyProfile, 'id' | 'userId' | 'createdAt' | 'updatedAt' | 'logoUrl'> {
   return {
     companyName: dto.companyName,
