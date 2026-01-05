@@ -23,10 +23,16 @@ export interface CompanyProfileDTO {
 }
 
 /**
+ * Base DTO payload type (without metadata fields)
+ */
+type CompanyProfileDTOBase = Omit<CompanyProfileDTO, 'id' | 'userId' | 'createdAt' | 'updatedAt' | 'logoUrl'>
+
+/**
  * Input type for CompanyProfileDTO that allows undefined for optional fields
  * Used for API payloads (from Zod validation) where fields can be undefined
+ * Only companyName is required; all other fields are optional (can be undefined)
  */
-export type CompanyProfileDTOInput = Omit<CompanyProfileDTO, 'id' | 'userId' | 'createdAt' | 'updatedAt' | 'logoUrl'> & {
+export type CompanyProfileDTOInput = Omit<CompanyProfileDTOBase, 'contactName' | 'state' | 'email' | 'phone' | 'streetAddress' | 'city' | 'postalCode' | 'country' | 'taxId'> & {
   contactName?: string | null
   state?: string | null
   email?: string | null
