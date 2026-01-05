@@ -1,6 +1,9 @@
 import PDFDocument from 'pdfkit'
 import { formatDate, formatCurrency, formatNumber, isOverdue } from './pdf-helpers'
 
+// Type for PDFDocument instance
+type PDFDocumentType = InstanceType<typeof PDFDocument>
+
 /**
  * Client data structure used by PDF generation
  * Contains only the fields needed for PDF rendering
@@ -51,7 +54,7 @@ interface InvoiceWithRelations {
   }
 }
 
-export function generateInvoicePDF(doc: PDFDocument, invoice: InvoiceWithRelations): void {
+export function generateInvoicePDF(doc: PDFDocumentType, invoice: InvoiceWithRelations): void {
   const { companyProfile } = invoice.user
   const { client, lineItems } = invoice
 
