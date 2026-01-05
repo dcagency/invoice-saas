@@ -3,6 +3,9 @@ import { NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
 import { handleApiError } from '@/lib/api/error-handler'
 
+export const dynamic = 'force-dynamic'
+export const runtime = 'nodejs'
+
 // GET /api/invoices/next-number - Get suggested next invoice number
 export async function GET() {
   try {

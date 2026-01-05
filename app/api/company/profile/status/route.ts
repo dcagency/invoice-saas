@@ -5,6 +5,9 @@ import { isProfileComplete } from '@/lib/company-profile'
 import { handleApiError } from '@/lib/api/error-handler'
 import { toCompanyProfileDTO } from '@/lib/mappers/companyProfile'
 
+export const dynamic = 'force-dynamic'
+export const runtime = 'nodejs'
+
 // GET /api/company/profile/status - Get the company profile status
 export async function GET() {
   try {

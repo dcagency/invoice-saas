@@ -7,6 +7,9 @@ import { isValidCuid } from '@/lib/api/validators'
 import { handleApiError } from '@/lib/api/error-handler'
 import { toCompanyProfileDTO } from '@/lib/mappers/companyProfile'
 
+export const dynamic = 'force-dynamic'
+export const runtime = 'nodejs'
+
 // GET /api/invoices/[id]/pdf - Generate and download invoice PDF
 export async function GET(
   request: NextRequest,

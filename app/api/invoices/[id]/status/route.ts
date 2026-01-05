@@ -5,6 +5,9 @@ import { z } from 'zod'
 import { isValidCuid } from '@/lib/api/validators'
 import { handleApiError } from '@/lib/api/error-handler'
 
+export const dynamic = 'force-dynamic'
+export const runtime = 'nodejs'
+
 const statusSchema = z.object({
   status: z.enum(['DRAFT', 'SENT', 'PAID']),
 })

@@ -5,6 +5,9 @@ import { z } from 'zod'
 import { handleApiError } from '@/lib/api/error-handler'
 import { toCompanyProfileDTO, fromCompanyProfileDTO } from '@/lib/mappers/companyProfile'
 
+export const dynamic = 'force-dynamic'
+export const runtime = 'nodejs'
+
 // Schema uses DTO format (contactName, state) for API/UI consistency
 const companyProfileSchema = z.object({
   companyName: z.string().min(2, 'Company name must be at least 2 characters').max(200, 'Company name must be at most 200 characters'),

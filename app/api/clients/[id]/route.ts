@@ -5,6 +5,9 @@ import { z } from 'zod'
 import { isValidCuid } from '@/lib/api/validators'
 import { handleApiError } from '@/lib/api/error-handler'
 
+export const dynamic = 'force-dynamic'
+export const runtime = 'nodejs'
+
 const clientSchema = z.object({
   companyName: z.string().min(1, 'Company name is required'),
   contactName: z.string().optional().nullable(),

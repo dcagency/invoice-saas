@@ -9,6 +9,7 @@ import { isValidCuid } from '@/lib/api/validators'
 import { handleApiError } from '@/lib/api/error-handler'
 import { toCompanyProfileDTO } from '@/lib/mappers/companyProfile'
 
+export const dynamic = 'force-dynamic'
 export const runtime = 'nodejs'
 
 const sendEmailSchema = z.object({

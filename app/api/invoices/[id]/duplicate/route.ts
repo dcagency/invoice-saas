@@ -11,6 +11,9 @@ import {
 import { isValidCuid } from '@/lib/api/validators'
 import { handleApiError } from '@/lib/api/error-handler'
 
+export const dynamic = 'force-dynamic'
+export const runtime = 'nodejs'
+
 // Server-side helper to convert number to Prisma Decimal
 function toDecimal(value: number | string | null | undefined): Decimal {
   if (value === null || value === undefined) {
